@@ -1,7 +1,7 @@
 from __future__ import print_function
 # tag::bot_vs_bot[]
 from dlgo.agent import naive
-from dlgo import goboard_slow as goboard
+from dlgo import goboard
 from dlgo import gotypes
 from dlgo.utils import print_board, print_move
 import time
@@ -26,7 +26,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# <1> We set a sleep timer to 0.3 seconds so that bot moves aren't printed too fast to observe
-# <2> Before each move we clear the screen. This way the board is always printed to the same position on the command line.
-# end::bot_vs_bot[]
