@@ -1,6 +1,6 @@
 import sys
 import random
-from dlgo.agent import Agent
+from dlgo.agent.base import Agent
 from dlgo.scoring import GameResult
 
 __all__ = [
@@ -42,7 +42,7 @@ def capture_diff(game_state):
 def best_result(game_state, max_depth, eval_fn):
     # If the game is already over, you know who the winner is.
     if game_state.is_over():
-        if game_state.winning() == game_state.next_player:
+        if game_state.winner() == game_state.next_player:
             return MAX_SCORE
         else:
             return MIN_SCORE
@@ -52,7 +52,7 @@ def best_result(game_state, max_depth, eval_fn):
         return eval_fn(game_state)
     best_so_far = MIN_SCORE
     # Loop over all possible moves
-    for candidate_move in game_state.legal_move():
+    for candidate_move in game_state.legal_moves():
         # See what the board would look like if you play this move
         next_state = game_state.apply_move(candidate_move)
         # Find the opponent’s best result from this position
@@ -76,7 +76,7 @@ class DepthPrunedAgent(Agent):
         best_moves = []
         best_score = None
         # Loop over all legal moves.
-        for possible_move in game_state.legal_move():
+        for possible_move in game_state.legal_moves():
             # Calculate the game state if we select this move.
             next_state = game_state.apply_move(possible_move)
             # Since our opponent plays next, figure out their best

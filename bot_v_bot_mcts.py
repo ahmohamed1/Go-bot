@@ -1,9 +1,9 @@
 from __future__ import print_function
 # tag::bot_vs_bot[]
-from dlgo import goboard
+from dlgo import goboard_fast as goboard
 from dlgo import gotypes
 from dlgo import evaluate_functions
-from dlgo.agent.minimax import depthpruning
+from dlgo.agent.mcts import mcts
 from dlgo.utils import print_board, print_move
 import time
 
@@ -11,8 +11,8 @@ def main():
     board_size = 9
     game = goboard.GameState.new_game(board_size)
     bots = {
-        gotypes.Player.black: depthpruning.DepthPrunedAgent(2, evaluate_functions.capture_diff),
-        gotypes.Player.white: depthpruning.DepthPrunedAgent(1, evaluate_functions.capture_diff),
+        gotypes.Player.black: mcts.MCTSAgent(5, temperature=1.4),
+        gotypes.Player.white: mcts.MCTSAgent(5, temperature=1.4),
     }
     while not game.is_over():
         time.sleep(0.3)  # <1>
