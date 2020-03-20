@@ -1,13 +1,16 @@
 from dlgo.agent import naive
-from dlgo import goboard_slow as goboard
+from dlgo import goboard
 from dlgo import gotypes
 from dlgo.utils import print_move, print_board, point_from_coords
 from six.moves import input
 
+from dlgo import evaluate_functions
+from dlgo.agent import depthpruning
+
 def main():
     board_size = 9
     game = goboard.GameState.new_game(board_size)
-    bot = naive.RandomBot()
+    bot = depthpruning.DepthPrunedAgent(5, evaluate_functions.capture_diff)
 
     while not game.is_over():
         print(chr(27) + "[2J")
