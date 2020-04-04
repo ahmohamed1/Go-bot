@@ -1,32 +1,47 @@
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.layers import Conv2D
+from keras.layers import Conv2D, Flatten, MaxPooling2D
 
 np.random.seed(123)
-X = np.load('generated_games/features40k.npy')
-Y = np.load('generated_games/labels40k.npy')
-samples = X.shape[0]
-board_size = 9 * 9
+X = np.load('generated_games/features-40k.npy')
+Y = np.load('generated_games/labels-40k.npy')
 
+samples = X.shape[0]
+size = 9
+input_shape = (size, size, 1)
+
+X = X.reshape(samples, size, size, 1)
 
 train_samples = int(0.9 * samples)
 X_train, X_test = X[:train_samples], X[train_samples:]
 Y_train, Y_test = Y[:train_samples], Y[train_samples:]
 
 model = Sequential()
-model.add(Conv2D(50, (3, 3), strides=(1, 1), padding='same', input_shape=(9,9)))
-model.add(Dense(500, activation='sigmoid'))
-model.add(Dense(board_size, activation='sigmoid'))
+model.add(Conv2D(48, kernel_size=(3, 3),
+    activation='relu',
+    padding='same',
+    input_shape=input_shape))
+
+model.add(Dropout(rate=0.5))
+model.add(Conv2D(48, (3, 3),
+    padding='same', activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(rate=0.5))
+model.add(Flatten())
+model.add(Dense(512, activation='relu'))
+model.add(Dropout(rate=0.5))
+model.add(Dense(size * size, activation='softmax'))
+
 model.summary()
 
-model.compile(loss='mean_squared_error',
-            optimizer='sgd',
-            metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy',
+    optimizer='sgd',
+    metrics=['accuracy'])
 
 model.fit(X_train, Y_train,
         batch_size=64,
-        epochs=15,
+        epochs=20,
         verbose=1,
         validation_data=(X_test, Y_test))
 
